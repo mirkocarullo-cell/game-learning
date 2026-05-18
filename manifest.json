@@ -1,0 +1,97 @@
+{
+  "name": "Game Learning - Impara Giocando",
+  "short_name": "Game Learning",
+  "description": "Un'app educational gamificata dove i bambini imparano storia, matematica e logica giocando con Dino, Einstein e Supereroe",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "portrait-primary",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "categories": ["education", "games"],
+  
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23667eea' width='192' height='192'/><text x='50%' y='50%' font-size='100' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='Arial'>🎮</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%23667eea' width='512' height='512'/><text x='50%' y='50%' font-size='250' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='Arial'>🎮</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23667eea' width='180' height='180'/><text x='50%' y='50%' font-size='90' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='Arial'>🎮</text></svg>",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect fill='%23667eea' width='540' height='720'/><text x='50%' y='100' font-size='40' text-anchor='middle' fill='white'>Game Learning</text><text x='50%' y='350' font-size='60' text-anchor='middle' fill='white'>🦕🧠🦸</text></svg>",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Dino - Evoluzione",
+      "short_name": "Dino",
+      "description": "Impara l'evoluzione dell'uomo",
+      "url": "./index.html?char=dinosauro",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%2310b981' width='192' height='192'/><text x='50%' y='50%' font-size='100' dominant-baseline='middle' text-anchor='middle' fill='white'>🦕</text></svg>",
+          "sizes": "192x192",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Einstein - Scienza",
+      "short_name": "Einstein",
+      "description": "Vinci il premio Nobel con la matematica",
+      "url": "./index.html?char=einstein",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%233b82f6' width='192' height='192'/><text x='50%' y='50%' font-size='100' dominant-baseline='middle' text-anchor='middle' fill='white'>🧠</text></svg>",
+          "sizes": "192x192",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Supereroe - Logica",
+      "short_name": "Supereroe",
+      "description": "Sconfiggi i nemici con la logica",
+      "url": "./index.html?char=superhero",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23f59e0b' width='192' height='192'/><text x='50%' y='50%' font-size='100' dominant-baseline='middle' text-anchor='middle' fill='white'>🦸</text></svg>",
+          "sizes": "192x192",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+
+  "prefer_related_applications": false
+}
