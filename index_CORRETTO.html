@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="Game Learning - Impara giocando con Dino, Einstein e Supereroe">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Game Learning">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23667eea' width='180' height='180'/><text x='50%' y='50%' font-size='80' dominant-baseline='middle' text-anchor='middle' fill='white'>🎮</text></svg>">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <title>Game Learning - Avventure Educative</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #667eea;
+            color: #333;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+
+        /* Safe Area for notch devices */
+        body {
+            padding: max(0px, env(safe-area-inset-top)) max(0px, env(safe-area-inset-right)) max(0px, env(safe-area-inset-bottom)) max(0px, env(safe-area-inset-left));
+        }
+
+        #app {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            animation: fadeIn 0.3s ease-in;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .screen.active {
+            display: flex;
+            position: relative;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Character Selection Screen */
+        .selection-screen {
+            flex-direction: column;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px 16px 16px;
+            gap: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            width: 100%;
+        }
+
+        .app-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .app-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .characters-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 0 8px;
+        }
+
+        .character-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .character-card:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .character-card.dinosauro {
+            border-color: #10b981;
+            background: linear-gradient(135deg, rgba(16,185,129,0.05), rgba(16,185,129,0.1));
+        }
+
+        .character-card.einstein {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, rgba(59,130,246,0.05), rgba(59,130,246,0.1));
+        }
+
+        .character-card.superhero {
+            border-color: #f59e0b;
+            background: linear-gradient(135deg, rgba(245,158,11,0.05), rgba(245,158,11,0.1));
+        }
+
+        .character-emoji {
+            font-size: 56px;
+            min-width: 56px;
+            text-align: center;
+            animation: bounce 2s infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .character-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .character-info p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Game Screen */
+        .game-screen {
+            flex-direction: column;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .game-header {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .game-char-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .game-char-emoji {
+            font-size: 40px;
+        }
+
+        .game-char-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .game-level-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .game-content {
+            flex: 1;
+            background: white;
+            margin: 12px;
+            border-radius: 20px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            gap: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background: #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 10px;
+            transition: width 0.4s ease;
+        }
+
+        .mission-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            text-align: center;
+        }
+
+        .mission-description {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .game-area {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #667eea;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .game-emoji {
+            font-size: 64px;
+            animation: bounce 1s infinite;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .quiz-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            active-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.3);
+        }
+
+        .quiz-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 1px 4px rgba(102,126,234,0.2);
+        }
+
+        .quiz-btn.correct {
+            background: #10b981;
+            animation: pulse 0.5s ease;
+        }
+
+        .quiz-btn.wrong {
+            background: #ef4444;
+            animation: shake 0.4s ease;
+        }
+
+        .quiz-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        .message-box {
+            background: linear-gradient(135deg, #f0f4ff, #e5ebff);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            font-size: 13px;
+            text-align: center;
+            color: #333;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:active {
+            opacity: 0.9;
+            transform: scale(0.97);
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #333;
+        }
+
+        .btn-secondary:active {
+            opacity: 0.8;
+            transform: scale(0.97);
+        }
+
+        /* Completion Screen */
+        .completion-screen {
+            flex-direction: column;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            gap: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .confetti-animation {
+            font-size: 48px;
+            animation: float 3s ease-in-out infinite;
+            margin: 0 8px;
+            display: inline-block;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        .completion-title {
+            font-size: 36px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .completion-message {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .stats-grid {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.2);
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .completion-btn {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .completion-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-right: 12px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(102,126,234,0.3);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:active {
+            background: rgba(102,126,234,0.6);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .app-title {
+                font-size: 28px;
+            }
+
+            .character-card {
+                padding: 14px;
+            }
+
+            .game-content {
+                margin: 8px;
+            }
+        }
+
+        /* Install Prompt */
+        .install-prompt {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 16px;
+            border-radius: 16px 16px 0 0;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .install-prompt.show {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .install-prompt-text {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .install-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .install-btn-install {
+            flex: 1;
+            padding: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .install-btn-close {
+            flex: 1;
+            padding: 10px;
+            background: #e5e7eb;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Selection Screen -->
+        <div class="screen selection-screen active" id="selectionScreen">
+            <div class="header">
+                <div class="app-title">🎮 Game Learning</div>
+                <div class="app-subtitle">Scegli il tuo avventuriero</div>
+            </div>
+
+            <div class="characters-container">
+                <div class="character-card dinosauro" onclick="selectCharacter('dinosauro')">
+                    <div class="character-emoji">🦕</div>
+                    <div class="character-info">
+                        <h3>Dino</h3>
+                        <p>Impara l'evoluzione dell'uomo</p>
+                    </div>
+                </div>
+
+                <div class="character-card einstein" onclick="selectCharacter('einstein')">
+                    <div class="character-emoji">🧠</div>
+                    <div class="character-info">
+                        <h3>Einstein</h3>
+                        <p>Vinci il premio Nobel con la scienza</p>
+                    </div>
+                </div>
+
+                <div class="character-card superhero" onclick="selectCharacter('superhero')">
+                    <div class="character-emoji">🦸</div>
+                    <div class="character-info">
+                        <h3>Supereroe</h3>
+                        <p>Sconfiggi i nemici con la logica</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="screen game-screen" id="gameScreen">
+            <div class="game-header">
+                <div class="game-char-info">
+                    <div class="game-char-emoji" id="gameCharEmoji">🦕</div>
+                    <div>
+                        <div class="game-char-name" id="gameName">Dino</div>
+                    </div>
+                </div>
+                <div class="game-level-badge">
+                    Livello <span id="levelNum">1</span>/5
+                </div>
+            </div>
+
+            <div class="game-content">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 20%;">20%</div>
+                </div>
+
+                <div class="mission-title" id="missionTitle">Il Grande Salto</div>
+                <div class="mission-description" id="missionDesc">Aiuta la scimmia a evolversi</div>
+
+                <div class="game-area" id="gameArea">
+                    <div class="game-emoji" id="gameEmoji">🦕</div>
+                    <div id="gameContent"></div>
+                </div>
+
+                <div class="message-box" id="messageBox">💡 Tocca per giocare</div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="goBack()">← Indietro</button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextLevel()" style="display:none;">Avanti →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completion Screen -->
+        <div class="screen completion-screen" id="completionScreen">
+            <div>
+                <span class="confetti-animation">🎉</span>
+                <span class="confetti-animation">⭐</span>
+                <span class="confetti-animation">🏆</span>
+            </div>
+            <div class="completion-title">Complimenti!</div>
+            <div class="completion-message">
+                Hai completato l'avventura con <span id="completionChar">Dino</span>! 🎊
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="finalScore">100</div>
+                    <div class="stat-label">Punti Totali</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Livelli</div>
+                </div>
+            </div>
+
+            <button class="completion-btn" onclick="goBack()">
+                Scegli Un Altro Personaggio
+            </button>
+        </div>
+    </div>
+
+    <!-- Install Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-prompt-text">
+            📱 Installa Game Learning per un accesso veloce!
+        </div>
+        <div class="install-buttons">
+            <button class="install-btn-install" onclick="installApp()">Installa</button>
+            <button class="install-btn-close" onclick="dismissInstall()">Dopo</button>
+        </div>
+    </div>
+
+    <script>
+        // Game Data
+        const gameData = {
+            dinosauro: {
+                emoji: '🦕',
+                name: 'Dino',
+                color: '#10b981',
+                levels: [
+                    {
+                        id: 1,
+                        title: 'Il Primo Passo Evolutivo',
+                        description: 'Scopri da quale animale deriva l\'uomo!',
+                        emoji: '🐵',
+                        type: 'quiz',
+                        difficulty: 'easy',
+                        challenge: 'Seleziona il primo livello evolutivo dell\'uomo:',
+                        options: ['🐵 Scimmia', '🦅 Uccello', '🐠 Pesce'],
+                        correct: 0,
+                        points: 25,
+                        postCorrectNarration: "ESATTO ORA CI TROVIAMO NELLA PRIMA FASE EVOLUTIVA DELL'UOMO, QUELLA IN CUI SI TROVA IN UNA SCIMMIA! TRA QUALCHE MIGLIAIA DI ANNI SVILUPPERA' LA CAPACITA' DI CAMMINARE SU DUE GAMBE E TUTTO IL SUO CORPO CAMBIERA'! PRIMA IL PIANETA ERA VISSUTO DA GRANDISSIMI ANIMALI, I MIEI FRATELLI DINOSAURI! SAI DIRMI QUALE E' IL DINOSAURO PIU' GRANDE CHE SIA MAI ESISTITO?"
+                    },
+                    {
+                        id: 2,
+                        title: 'Il Dinosauro Gigante',
+                        description: 'Quale è il dinosauro più grande della storia?',
+                        emoji: '🦖',
+                        type: 'quiz',
+                        difficulty: 'medium',
+                        challenge: 'Quale è il dinosauro più grande della storia?',
+                        options: ['🦖 Velociraptor', '🦖 T-Rex', '🦖 Patagotitan'],
+                        correct: 2,
+                        points: 25,
+                        postCorrectNarration: "EH EH MOLTI PENSANO CHE SIA STATO MIO CUGINO T-REX AD ESSERE IL DINOSAURO PIU' GRANDE, MA E' SBAGLIATO, LUI E' DIVENTATO SOLO IL PIU' FAMOSO, ERA IL FEDEZ DELL'ERA DEI DINOSAURI! IL PIU' GRANDE ERA MIO ZIO PATAGOTITAN, Vissuto in Argentina circa 95 milioni di anni fa, questo colossale erbivoro superava i 37-40 metri di lunghezza e poteva pesare oltre 70 tonnellate (l'equivalente di circa 15 elefanti africani)."
+                    },
+                    {
+                        id: 3,
+                        title: 'L\'Estinzione dei Dinosauri',
+                        description: 'Perché si sono estinti i dinosauri?',
+                        emoji: '☄️',
+                        type: 'quiz',
+                        difficulty: 'medium',
+                        challenge: 'Perché si sono estinti i dinosauri?',
+                        options: ['❄️ Era Glaciale', '👨 L\'uomo li ha mangiati', '☄️ Meteorite'],
+                        correct: 2,
+                        points: 25,
+                        postCorrectNarration: "EH SI, PURTROPPO CI SIAMO ESTINTI, ED IO, PER QUANTO TI POSSA SEMBRARE VERO, SONO SOLO FRUTTO DELL'IMMAGINAZIONE DEL MIO CREATORE: MIRKO TECH INSIDER. PENSA CHE NOI DINOSAURI CI SIAMO ESTINTI CIRCA 66 MILIONI DI ANNI FA A CAUSA DELL'IMPATTO CATASTROFICO DI UN ENORME ASTEROIDE SULLA TERRA. QUESTO EVENTO HA INNESCATO UNA SERIE DI SCONVOLGIMENTI CLIMATICI E AMBIENTALI GLOBALI CHE HANNO PORTATO ALLA SCOMPARSA DI CIRCA IL 75% DELLE SPECIE VIVENTI."
+                    },
+                    {
+                        id: 4,
+                        title: 'L\'Età del Fuoco',
+                        description: 'Chi ha scoperto il fuoco?',
+                        emoji: '🔥',
+                        type: 'quiz',
+                        difficulty: 'medium',
+                        challenge: 'Sei arrivato all\'età del fuoco, chi l\'ha scoperto?',
+                        options: ['👨 Homo Sapiens', '🐵 Scimmia', '👨 Homo Erectus'],
+                        correct: 2,
+                        points: 25,
+                        postCorrectNarration: "MA SEI FENOMENALE! QUESTA ERA DIFFICILE! LA DOMESTICAZIONE DEL FUOCO DA PARTE DEI PRIMI OMINIDI, AVVENUTA TRA 1,5 E 2 MILIONI DI ANNI FA GRAZIE ALL'HOMO ERECTUS, HA SEGNATO LA PIU' GRANDE SVOLTA EVOLUTIVA DELLA STORIA UMANA. IL CONTROLLO DELLA FIAMMA HA PERMESSO ALL'UOMO DI CUOCERE I CIBI, RICAVARE PIU' ENERGIA PER LO SVILUPPO CEREBRALE E SOPRAVVIVERE NEI CLIMI PIU' FREDDI"
+                    },
+                    {
+                        id: 5,
+                        title: 'La Civiltà Moderna',
+                        description: 'In che stadio evolutivo siamo adesso?',
+                        emoji: '🌍',
+                        type: 'quiz',
+                        difficulty: 'hard',
+                        challenge: 'WOW L\'uomo ha costruito una civiltà! In che stato evolutivo si trova l\'uomo adesso?',
+                        options: ['👨 Homo Erectus', '👨 Homo Sapiens', '👨 Homo Sapiens Sapiens'],
+                        correct: 2,
+                        points: 30,
+                        postCorrectNarration: "ESATTO! IN REALTA' OGGI LA DICITURA SAPIENS SAPIENS NON SI USA PIU', MA DEVI SAPERE CHE LA PRIMA CIVILTA' DELLA STORIA SONO I SUMERI, FIORITI IN MESOPOTAMIA (L'ODIERNO IRAQ) INTORNO AL IV MILLENNIO A.C. (CIRCA 4000-3500 A.C.). HANNO INVENTATO LA SCRITTURA, LE PRIME CITTA'-STATO (COME UR E URUK) E LA RUOTA. BENE, GRAZIE PER AVERMI AIUTATO IN QUESTA AVVENTURA INCREDIBILE! OGGI HAI IMPARATO CHE PER QUANTO DIVERSI, SIAMO TUTTI DERIVATI DELLA STESSA CIVILTA', I TUOI AMICI, AMICHE, LE MAESTRE, SIAMO TUTTI LONTANISSIMI PARENTI. COLTIVA SEMPRE I VALORI DELLA FRATELLANZA, DELL'AMICIZIA E SOPRATTUTTO RISPETTA LA NATURA! AIUTA CHI SI TROVA IN DIFFICOLTA' E CERCA DI ESSERE SEMPRE FELICE, SOLO COSÌ POTRAI ESSERE UN HOMO SUPER SAPIENS! SPERO DI RIVEDERTI PRESTO PER ALTRE AVVENTURE GRANDIOSE DELLA NOSTRA STORIA!"
+                    }
+                ]
+            },
+            einstein: {
+                emoji: '🧠',
+                name: 'Einstein',
+                color: '#3b82f6',
+                levels: [
+                    {
+                        title: 'Contare le Stelle',
+                        description: 'Risolvi la matematica semplice',
+                        emoji: '🌟',
+                        type: 'quiz',
+                        challenge: 'Quanto fa 5 + 3?',
+                        options: ['6', '8', '10'],
+                        correct: 1,
+                        points: 20
+                    },
+                    {
+                        title: 'La Velocità della Luce',
+                        description: 'Calcola il tempo con la velocità',
+                        emoji: '⚡',
+                        type: 'quiz',
+                        challenge: 'Se vai a 100 km/h per 2 ore, quanti km percorri?',
+                        options: ['100 km', '200 km', '400 km'],
+                        correct: 1,
+                        points: 25
+                    },
+                    {
+                        title: 'Forme Geometriche',
+                        description: 'Scopri il pattern delle forme',
+                        emoji: '🔷',
+                        type: 'sequence',
+                        challenge: 'Completa la sequenza geometrica',
+                        items: ['□ Quadrato', '△ Triangolo', '○ Cerchio'],
+                        points: 25
+                    },
+                    {
+                        title: 'Multipli e Divisioni',
+                        description: 'Dividi le caramelle equamente',
+                        emoji: '🍬',
+                        type: 'quiz',
+                        challenge: 'Se hai 24 caramelle per 6 amici, quante per uno?',
+                        options: ['2', '4', '8'],
+                        correct: 1,
+                        points: 25
+                    },
+                    {
+                        title: 'E=mc²',
+                        description: 'La formula più famosa della scienza',
+                        emoji: '💡',
+                        type: 'quiz',
+                        challenge: 'Cosa rappresenta la "c" in E=mc²?',
+                        options: ['Chilometri', 'Velocità della luce', 'Carbonio'],
+                        correct: 1,
+                        points: 30
+                    }
+                ]
+            },
+            superhero: {
+                emoji: '🦸',
+                name: 'Supereroe',
+                color: '#f59e0b',
+                levels: [
+                    {
+                        title: 'Nemico 1: Il Puzzle',
+                        description: 'Risolvi il rompicapo del nemico',
+                        emoji: '🧩',
+                        type: 'sequence',
+                        challenge: 'Ordina i pezzi del puzzle',
+                        items: ['🧩 Pezzo 1', '🧩 Pezzo 2', '🧩 Pezzo 3'],
+                        points: 20
+                    },
+                    {
+                        title: 'Nemico 2: Il Misterio',
+                        description: 'Risolvi il suo enigma',
+                        emoji: '❓',
+                        type: 'quiz',
+                        challenge: 'Che cosa teme il Misterio?',
+                        options: ['La Verità', 'La Luce', 'Il Coraggio'],
+                        correct: 0,
+                        points: 25
+                    },
+                    {
+                        title: 'Nemico 3: L\'Oscurità',
+                        description: 'Accendi le luci giuste',
+                        emoji: '💡',
+                        type: 'click',
+                        challenge: 'Clicca le luci per illuminare',
+                        items: ['💡 Luce 1', '💡 Luce 2', '💡 Luce 3'],
+                        points: 25
+                    },
+                    {
+                        title: 'Nemico 4: Ladro di Tempo',
+                        description: 'Fermalo prima che scappi',
+                        emoji: '⏰',
+                        type: 'quiz',
+                        challenge: 'Come fermi il Ladro di Tempo?',
+                        options: ['Con velocità', 'Con intelligenza', 'Con amicizia'],
+                        correct: 2,
+                        points: 25
+                    },
+                    {
+                        title: 'Boss Finale: Re del Caos',
+                        description: 'L\'ultima battaglia ti aspetta',
+                        emoji: '👑',
+                        type: 'quiz',
+                        challenge: 'Cosa sconfigge davvero il caos?',
+                        options: ['Violenza', 'Ordine e Amore', 'Paura'],
+                        correct: 1,
+                        points: 30
+                    }
+                ]
+            }
+        };
+
+        let currentCharacter = null;
+        let currentLevel = 0;
+        let totalScore = 0;
+        let deferredPrompt = null;
+
+        // PWA Install Handling
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            showInstallPrompt();
+        });
+
+        function showInstallPrompt() {
+            const prompt = document.getElementById('installPrompt');
+            setTimeout(() => {
+                prompt.classList.add('show');
+            }, 2000);
+        }
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted install');
+                    }
+                    deferredPrompt = null;
+                });
+                dismissInstall();
+            }
+        }
+
+        function dismissInstall() {
+            document.getElementById('installPrompt').classList.remove('show');
+        }
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => {
+                    console.log('Service Worker registration failed:', err);
+                });
+            });
+        }
+
+        // Game Functions
+        function selectCharacter(char) {
+            currentCharacter = char;
+            currentLevel = 0;
+            totalScore = 0;
+
+            document.getElementById('selectionScreen').classList.remove('active');
+            document.getElementById('gameScreen').classList.add('active');
+
+            loadLevel();
+        }
+
+        function loadLevel() {
+            const data = gameData[currentCharacter];
+            const level = data.levels[currentLevel];
+            const progress = ((currentLevel + 1) / data.levels.length) * 100;
+
+            document.getElementById('gameCharEmoji').textContent = data.emoji;
+            document.getElementById('gameName').textContent = data.name;
+            document.getElementById('levelNum').textContent = currentLevel + 1;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressFill').textContent = Math.round(progress) + '%';
+            document.getElementById('missionTitle').textContent = level.title;
+            document.getElementById('missionDesc').textContent = level.description;
+            document.getElementById('gameEmoji').textContent = level.emoji;
+
+            const gameContent = document.getElementById('gameContent');
+            gameContent.innerHTML = '';
+
+            if (level.type === 'sequence' || level.type === 'click') {
+                const buttonsHTML = level.items.map((item, i) => 
+                    `<button class="quiz-btn" onclick="completeLevel()">${item}</button>`
+                ).join('');
+                gameContent.innerHTML = `
+                    <p style="color: #666; margin-bottom: 12px; font-weight: 500;">${level.challenge}</p>
+                    <div class="quiz-options">${buttonsHTML}</div>
+                `;
+            } else if (level.type === 'quiz') {
+                const buttonsHTML = level.options.map((opt, i) => 
+                    `<button class="quiz-btn" onclick="checkAnswer(${i}, ${level.correct})">${opt}</button>`
+                ).join('');
+                gameContent.innerHTML = `
+                    <p style="color: #333; margin-bottom: 12px; font-weight: 500; font-size: 15px;">${level.challenge}</p>
+                    <div class="quiz-options">${buttonsHTML}</div>
+                `;
+            }
+
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('messageBox').innerHTML = '💡 ' + level.description;
+        }
+
+        function completeLevel() {
+            const level = gameData[currentCharacter].levels[currentLevel];
+            totalScore += level.points;
+            document.getElementById('messageBox').innerHTML = '✅ Livello completato! Fantastico!';
+            
+            setTimeout(() => {
+                if (currentLevel < gameData[currentCharacter].levels.length - 1) {
+                    currentLevel++;
+                    loadLevel();
+                } else {
+                    showCompletion();
+                }
+            }, 1200);
+        }
+
+        function checkAnswer(selected, correct) {
+            const buttons = document.querySelectorAll('.quiz-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            const level = gameData[currentCharacter].levels[currentLevel];
+
+            if (selected === correct) {
+                buttons[selected].classList.add('correct');
+                totalScore += level.points;
+                document.getElementById('messageBox').innerHTML = '✅ Risposta corretta! Bravissimo!';
+                
+                setTimeout(() => {
+                    if (currentLevel < gameData[currentCharacter].levels.length - 1) {
+                        currentLevel++;
+                        loadLevel();
+                    } else {
+                        showCompletion();
+                    }
+                }, 1200);
+            } else {
+                buttons[selected].classList.add('wrong');
+                buttons[correct].classList.add('correct');
+                document.getElementById('messageBox').innerHTML = '❌ Non è la risposta giusta! Riproviamo!';
+                totalScore += 5;
+                
+                setTimeout(() => {
+                    buttons.forEach((btn, i) => {
+                        btn.classList.remove('wrong', 'correct');
+                        btn.disabled = false;
+                    });
+                }, 1500);
+            }
+        }
+
+        function showCompletion() {
+            const data = gameData[currentCharacter];
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('completionScreen').classList.add('active');
+            document.getElementById('completionChar').textContent = data.name;
+            document.getElementById('finalScore').textContent = totalScore;
+        }
+
+        function goBack() {
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('completionScreen').classList.remove('active');
+            document.getElementById('selectionScreen').classList.add('active');
+        }
+
+        // Hide URL bar on mobile
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 100);
+        });
+    </script>
+</body>
+</html>
