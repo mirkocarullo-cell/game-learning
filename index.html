@@ -657,119 +657,71 @@
                 </div>
 
                 <div class="mission-title" id="missionTitle">Il Grande Salto</div>
-                <div class="mission-description" id="missionDesc">Aiuta la scimmia a evolversi</div>
-
-                <div class="game-area" id="gameArea">
-                    <div class="game-emoji" id="gameEmoji">🦕</div>
-                    <div id="gameContent"></div>
-                </div>
-
-                <div class="message-box" id="messageBox">💡 Tocca per giocare</div>
-
-                <div class="action-buttons">
-                    <button class="btn btn-secondary" onclick="goBack()">← Indietro</button>
-                    <button class="btn btn-primary" id="nextBtn" onclick="nextLevel()" style="display:none;">Avanti →</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Completion Screen -->
-        <div class="screen completion-screen" id="completionScreen">
-            <div>
-                <span class="confetti-animation">🎉</span>
-                <span class="confetti-animation">⭐</span>
-                <span class="confetti-animation">🏆</span>
-            </div>
-            <div class="completion-title">Complimenti!</div>
-            <div class="completion-message">
-                Hai completato l'avventura con <span id="completionChar">Dino</span>! 🎊
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="finalScore">100</div>
-                    <div class="stat-label">Punti Totali</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">5</div>
-                    <div class="stat-label">Livelli</div>
-                </div>
-            </div>
-
-            <button class="completion-btn" onclick="goBack()">
-                Scegli Un Altro Personaggio
-            </button>
-        </div>
-    </div>
-
-    <!-- Install Prompt -->
-    <div class="install-prompt" id="installPrompt">
-        <div class="install-prompt-text">
-            📱 Installa Game Learning per un accesso veloce!
-        </div>
-        <div class="install-buttons">
-            <button class="install-btn-install" onclick="installApp()">Installa</button>
-            <button class="install-btn-close" onclick="dismissInstall()">Dopo</button>
-        </div>
-    </div>
-
-    <script>
-        // Game Data
-        const gameData = {
-            dinosauro: {
-                emoji: '🦕',
-                name: 'Dino',
-                color: '#10b981',
-                levels: [
-                    {
-                        title: 'Il Grande Salto',
-                        description: 'Aiuta la scimmia a evolversi in Homo Erectus',
-                        emoji: '🐵',
-                        type: 'sequence',
-                        challenge: 'Metti in ordine gli stadi evolutivi',
-                        items: ['🐵 Scimmia', '🧑 Homo Erectus', '👨 Sapiens'],
-                        points: 20
-                    },
-                    {
-                        title: 'Il Fuoco Scoperto',
-                        description: 'Scopri il fuoco cliccando gli elementi giusti',
-                        emoji: '🔥',
-                        type: 'click',
-                        challenge: 'Clicca i materiali per accendere il fuoco',
-                        items: ['🪵 Legna', '🪨 Pietra', '🔥 Fuoco!'],
-                        points: 20
-                    },
-                    {
-                        title: 'Agricoltura Nasce',
-                        description: 'Cosa coltivavano gli antichi agricoltori?',
-                        emoji: '🌾',
-                        type: 'quiz',
-                        challenge: 'Quale coltura è nata PER PRIMA?',
-                        options: ['🌾 Grano', '🍎 Mele', '🍌 Banane'],
-                        correct: 0,
-                        points: 25
-                    },
-                    {
-                        title: 'Le Prime Città',
-                        description: 'Costruisci la città ordinando i materiali',
-                        emoji: '🏛️',
-                        type: 'sequence',
-                        challenge: 'Ordina i componenti della città',
-                        items: ['🏠 Case', '🏛️ Tempio', '🌉 Mura'],
-                        points: 25
-                    },
-                    {
-                        title: 'Il Presente',
-                        description: 'Cosa guida l\'evoluzione umana?',
-                        emoji: '🌍',
-                        type: 'quiz',
-                        challenge: 'Cosa è stato il motore principale?',
-                        options: ['🧠 Intelligenza', '👊 Forza', '⚡ Velocità'],
-                        correct: 0,
-                        points: 30
-                    }
-                ]
-            },
+                {
+    id: 1,
+    title: 'Il Primo Passo Evolutivo',
+    description: 'Scopri da quale animale deriva l\'uomo!',
+    emoji: '🐵',
+    type: 'quiz',
+    difficulty: 'easy',
+    challenge: 'Seleziona il primo livello evolutivo dell\'uomo:',
+    options: ['🐵 Scimmia', '🦅 Uccello', '🐠 Pesce'],
+    correct: 0,
+    points: 25,
+    postCorrectNarration: "ESATTO ORA CI TROVIAMO NELLA PRIMA FASE EVOLUTIVA DELL'UOMO, QUELLA IN CUI SI TROVA IN UNA SCIMMIA! TRA QUALCHE MIGLIAIA DI ANNI SVILUPPERA' LA CAPACITA' DI CAMMINARE SU DUE GAMBE E TUTTO IL SUO CORPO CAMBIERA'! PRIMA IL PIANETA ERA VISSUTO DA GRANDISSIMI ANIMALI, I MIEI FRATELLI DINOSAURI! SAI DIRMI QUALE E' IL DINOSAURO PIU' GRANDE CHE SIA MAI ESISTITO?"
+},
+{
+    id: 2,
+    title: 'Il Dinosauro Gigante',
+    description: 'Quale è il dinosauro più grande della storia?',
+    emoji: '🦖',
+    type: 'quiz',
+    difficulty: 'medium',
+    challenge: 'Quale è il dinosauro più grande della storia?',
+    options: ['🦖 Velociraptor', '🦖 T-Rex', '🦖 Patagotitan'],
+    correct: 2,
+    points: 25,
+    postCorrectNarration: "EH EH MOLTI PENSANO CHE SIA STATO MIO CUGINO T-REX AD ESSERE IL DINOSAURO PIU' GRANDE, MA E' SBAGLIATO, LUI E' DIVENTATO SOLO IL PIU' FAMOSO, ERA IL FEDEZ DELL'ERA DEI DINOSAURI! IL PIU' GRANDE ERA MIO ZIO PATAGOTITAN, Vissuto in Argentina circa 95 milioni di anni fa, questo colossale erbivoro superava i 37-40 metri di lunghezza e poteva pesare oltre 70 tonnellate (l'equivalente di circa 15 elefanti africani)."
+},
+{
+    id: 3,
+    title: 'L\'Estinzione dei Dinosauri',
+    description: 'Perché si sono estinti i dinosauri?',
+    emoji: '☄️',
+    type: 'quiz',
+    difficulty: 'medium',
+    challenge: 'Perché si sono estinti i dinosauri?',
+    options: ['❄️ Era Glaciale', '👨 L\'uomo li ha mangiati', '☄️ Meteorite'],
+    correct: 2,
+    points: 25,
+    postCorrectNarration: "EH SI, PURTROPPO CI SIAMO ESTINTI, ED IO, PER QUANTO TI POSSA SEMBRARE VERO, SONO SOLO FRUTTO DELL'IMMAGINAZIONE DEL MIO CREATORE: MIRKO TECH INSIDER. PENSA CHE NOI DINOSAURI CI SIAMO ESTINTI CIRCA 66 MILIONI DI ANNI FA A CAUSA DELL'IMPATTO CATASTROFICO DI UN ENORME ASTEROIDE SULLA TERRA. QUESTO EVENTO HA INNESCATO UNA SERIE DI SCONVOLGIMENTI CLIMATICI E AMBIENTALI GLOBALI CHE HANNO PORTATO ALLA SCOMPARSA DI CIRCA IL 75% DELLE SPECIE VIVENTI."
+},
+{
+    id: 4,
+    title: 'L\'Età del Fuoco',
+    description: 'Chi ha scoperto il fuoco?',
+    emoji: '🔥',
+    type: 'quiz',
+    difficulty: 'medium',
+    challenge: 'Sei arrivato all\'età del fuoco, chi l\'ha scoperto?',
+    options: ['👨 Homo Sapiens', '🐵 Scimmia', '👨 Homo Erectus'],
+    correct: 2,
+    points: 25,
+    postCorrectNarration: "MA SEI FENOMENALE! QUESTA ERA DIFFICILE! LA DOMESTICAZIONE DEL FUOCO DA PARTE DEI PRIMI OMINIDI, AVVENUTA TRA 1,5 E 2 MILIONI DI ANNI FA GRAZIE ALL'HOMO ERECTUS, HA SEGNATO LA PIU' GRANDE SVOLTA EVOLUTIVA DELLA STORIA UMANA. IL CONTROLLO DELLA FIAMMA HA PERMESSO ALL'UOMO DI CUOCERE I CIBI, RICAVARE PIU' ENERGIA PER LO SVILUPPO CEREBRALE E SOPRAVVIVERE NEI CLIMI PIU' FREDDI"
+},
+{
+    id: 5,
+    title: 'La Civiltà Moderna',
+    description: 'In che stadio evolutivo siamo adesso?',
+    emoji: '🌍',
+    type: 'quiz',
+    difficulty: 'hard',
+    challenge: 'WOW L\'uomo ha costruito una civiltà! In che stato evolutivo si trova l\'uomo adesso?',
+    options: ['👨 Homo Erectus', '👨 Homo Sapiens', '👨 Homo Sapiens Sapiens'],
+    correct: 2,
+    points: 30,
+    postCorrectNarration: "ESATTO! IN REALTA' OGGI LA DICITURA SAPIENS SAPIENS NON SI USA PIU', MA DEVI SAPERE CHE LA PRIMA CIVILTA' DELLA STORIA SONO I SUMERI, FIORITI IN MESOPOTAMIA (L'ODIERNO IRAQ) INTORNO AL IV MILLENNIO A.C. (CIRCA 4000-3500 A.C.). HANNO INVENTATO LA SCRITTURA, LE PRIME CITTA'-STATO (COME UR E URUK) E LA RUOTA. BENE, GRAZIE PER AVERMI AIUTATO IN QUESTA AVVENTURA INCREDIBILE! OGGI HAI IMPARATO CHE PER QUANTO DIVERSI, SIAMO TUTTI DERIVATI DELLA STESSA CIVILTA', I TUOI AMICI, AMICHE, LE MAESTRE, SIAMO TUTTI LONTANISSIMI PARENTI. COLTIVA SEMPRE I VALORI DELLA FRATELLANZA, DELL'AMICIZIA E SOPRATTUTTO RISPETTA LA NATURA! AIUTA CHI SI TROVA IN DIFFICOLTA' E CERCA DI ESSERE SEMPRE FELICE, SOLO COSÌ POTRAI ESSERE UN HOMO SUPER SAPIENS! SPERO DI RIVEDERTI PRESTO PER ALTRE AVVENTURE GRANDIOSE DELLA NOSTRA STORIA!"
+}
             einstein: {
                 emoji: '🧠',
                 name: 'Einstein',
